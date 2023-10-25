@@ -1,30 +1,36 @@
-function convertPOkemonTypesToLi(pokemonTypes) {
-    return pokemonTypes.map((typeSlot) => `<li class="pokemon__left__types__types_type">${typeSlot.type.name}</li>`);
-}
+const pokemonList = document.getElementById('container__pokemons__id');
+
+const loadMoreButton = document.getElementById('loadMoreButton');
+
+const limit = 5;
+
+let offset = 0;
 
 
-
-function convertPokemonToLi(pokemon) {
-    return `
-        <li class="container__pokemons__pokemon water">
+function loadPokemonitens(){
+    pokeApi.getPokemons(offset, limit).then((pokemons = []) => {
+        pokemonList.innerHTML += pokemons.map((pokemon) =>
+        `<li class="container__pokemons__pokemon ${pokemon.type}">
             <div class="pokemon__left">
                 <span class="pokemon__left__name" >${pokemon.name}</span>     
                 <span class="pokemon__left__types">
                     <ol class="pokemon__left__types__types">
-                        ${convertPOkemonTypesToLi(pokemon.types).join('')}
+                        ${pokemon.types.map((type) => `<li class="pokemon__left__types__types_type">${type}</li>`).join('')}
                     </ol>
                 </span>
             </div>
             <div class="pokemon__right">
-                <span class="pokemon__right__number">#${pokemon.order} </span>
-                <img src="${pokemon.sprites.other.home.front_default}" alt="${pokemon.name}">
+                <span class="pokemon__right__number">#${pokemon.number} </span>
+                <img src="${pokemon.photo}" alt="${pokemon.name}">
             </div>
-        </li>
-    `;
+        </li>`).join('');   
+    })
+    
 }
 
-const pokemonList = document.getElementById('container__pokemons__id');
+loadPokemonitens(offset, limit);
 
-pokeApi.getPokemons().then((pokemons = []) => {
-    pokemonList.innerHTML += pokemons.map(convertPokemonToLi).join('');   
+loadMoreButton.addEventListener('click',() => {
+    offset += limit;
+    loadPokemonitens(offset, limit);
 })
