@@ -1,9 +1,28 @@
 
 const pokeApi = {};
 
+function convertPokeApiDetailToPokemon(pokeDatail){
+    const pokemon = new Pokemon();
+
+    pokemon.number = pokeDatail.order;
+    pokemon.name = pokeDatail.name;
+
+    const types = pokeDatail.types.map((typeSlot) => typeSlot.type.name);
+    const [type] = types;
+
+    pokemon.types = types;
+    pokemon.type = type;
+
+    pokemon.photo = pokeDatail.sprites.other.home.front_default;
+
+    return pokemon;
+
+}
+
 pokeApi.getPokemonDetail = (pokemon) => {
     return fetch(pokemon.url)
                 .then(response => response.json())
+                .then(convertPokeApiDetailToPokemon)
 
 }
 
